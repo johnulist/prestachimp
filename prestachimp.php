@@ -35,8 +35,7 @@ class Prestachimp extends Module
 	{
 	  return parent::install() &&
 	  	Configuration::updateValue('PRESTACHIMP', 'PRESTACHIMP MODULE') &&
-	  	$this->registerHook('footer') &&
-	  	$this->registerHook('myPrestaChimp');
+	  	$this->registerHook('footer');
 	}	
 
 	public function uninstall()
@@ -136,24 +135,12 @@ class Prestachimp extends Module
 	    return $helper->generateForm($fields_form);
 	}
 
-	public function hookMyPrestaChimp()
+	public function hookFooter()
 	{
 		$this->context->smarty->assign(array(
 			'mailchimp'		=> $this->context->link->getModuleLink('prestachimp', 'process')
 		));
 
 		return $this->display(__FILE__, 'my-mailchimp.tpl');
-	}
-
-	public function hookFooter()
-	{
-		$this->context->controller->addJS($this->_path.'prestachimp.js');
-		$this->context->controller->addCSS($this->_path.'prestachimp.css', 'screen');
-
-		$this->context->smarty->assign(array(
-			'mchimp'		=> $this->context->link->getModuleLink('prestachimp', 'iframe')
-		));
-
-		return $this->display(__FILE__, 'my-mailchimp-footer.tpl');
 	}	
 }

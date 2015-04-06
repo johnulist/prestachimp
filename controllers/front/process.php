@@ -73,7 +73,7 @@ class PrestachimpProcessModuleFrontController extends ModuleFrontController
 			);			
 
 			$msg = 'Thank you for subscribing. Please check your email to verify your subscription.';
-			return Array('result'=>true,'msg'=>$msg);
+			return array('result'=>true,'msg'=>$msg);
 
 		} catch (Mailchimp_Error $e) {
             if ($e->getMessage()) {
@@ -85,7 +85,7 @@ class PrestachimpProcessModuleFrontController extends ModuleFrontController
             if (strlen(trim($email)) == 0)
             	$error = 'Oops! Please check the email the you entered and try again.';
 
-            return Array('result'=>false,'msg'=>$error);
+            return array('result'=>false,'msg'=>$error);
 		}
 	}
 }
