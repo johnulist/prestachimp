@@ -28,10 +28,11 @@
  * @since 1.5.0
  */
 
-include _PS_ROOT_DIR_ .'/modules/prestachimp/libraries/Mailchimp.php';
-
-class PrestachimpProcessModuleFrontController extends ModuleFrontController
+class PrestachimpIframeModuleFrontController extends ModuleFrontController
 {
+	public $ssl = true;
+	public $display_column_left = false;
+
 	/**
 	 * @see FrontController::initContent()
 	 */
@@ -39,27 +40,6 @@ class PrestachimpProcessModuleFrontController extends ModuleFrontController
 	{
 		parent::initContent();
 
-		//VALIDATE IF THIS IS A CORRECT EMAIL
-		$valid = Validate::isEmail($email = Tools::getValue('EMAIL'));
-		
-		if ($valid) {
-
-			$result = $this->module->subscribe($email);
-
-			if (!Tools::getValue('ajax'))
-			{
-				if ($result['result'])
-					Tools::redirect('/?action=mc&status=1&msg='.urlencode($result['msg']).'#newsletter-wrap');
-				else
-					Tools::redirect('/?action=mc&status=0&msg='.urlencode($result['msg']).'#newsletter-wrap');	
-			}
-			else
-				die(Tools::jsonEncode($result));			
-		}else{
-
-			$result = array('result'=> false, 'msg'=> 'Invalid email');
-
-			die(Tools::jsonEncode($result));
-		}
+		$this->setTemplate('mailchimp-pop-v2.tpl');
 	}
 }

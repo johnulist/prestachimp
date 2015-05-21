@@ -1,31 +1,130 @@
+/*SEE THEMES/SENDAH/JS/MODULES/PRESTACHIMP/PRESTACHIMP.JS*/
+
 // Activate fancyBox
-$(".popchimp")
-.fancybox({
-    openEffect: 'elastic',
-    closeEffect: 'elastic',
-    prevEffect: 'fade',
-    nextEffect: 'fade',
-    fitToView: false, // 
-    maxWidth: "90%", // 
-    type: 'iframe',
-    scrolling: 'no',
-    iframe: {
-        preload: false
-    },
-	afterLoad : function(){
-		//SET A COOKIE WHEN THE NEWSLETTER IS POPPED UP
-		$.cookie('mchimp-pop', 'loaded');
-	},
-	beforeLoad : function(){
-		//CHECK FOR THE COOKIE BEFORE LOADING THE POP UP AGAIN
-		if ($.cookie('mchimp-pop') == 'loaded'){
-			return false
+if ($(window).width() < 480 ) {
+	$(".popchimp")
+	.fancybox({
+	    openEffect: 'elastic',
+	    closeEffect: 'elastic',
+	    prevEffect: 'fade',
+	    nextEffect: 'fade',
+	    fitToView: false, // 
+	    width: "100%", //
+	    height: "40%", 
+	    type: 'iframe',
+	    scrolling: 'no',
+	    iframe: {
+	        preload: false
+	    },
+		afterLoad : function(){
+			//SET A COOKIE WHEN THE NEWSLETTER IS POPPED UP
+			$.cookie('mchimp-pop', 'loaded');
+		},
+		beforeLoad : function(){
+			//CHECK FOR THE COOKIE BEFORE LOADING THE POP UP AGAIN
+			if ($.cookie('mchimp-pop') == 'loaded'){
+				return true
+			}
 		}
-	}
+	});
+}else{
+	$(".popchimp")
+	.fancybox({
+	    openEffect: 'elastic',
+	    closeEffect: 'elastic',
+	    prevEffect: 'fade',
+	    nextEffect: 'fade',
+	    fitToView: false, // 
+	    width: "30%", //
+	    height: "40%", 
+	    type: 'iframe',
+	    scrolling: 'no',
+	    iframe: {
+	        preload: false
+	    },
+		afterLoad : function(){
+			//SET A COOKIE WHEN THE NEWSLETTER IS POPPED UP
+			$.cookie('mchimp-pop', 'loaded');
+		},
+		beforeLoad : function(){
+			//CHECK FOR THE COOKIE BEFORE LOADING THE POP UP AGAIN
+			if ($.cookie('mchimp-pop') == 'loaded'){
+				return true
+			}
+		}
+	});
+}
+
+$(document).ready(function(){
+	
+	/*============== THIS HANDLES THE MAILCHIMP MAILING LIST SIGNUP BOX IN THE PAGE FOOTER ==============*/
+	$('#mc-form-footer').on('submit', function(){
+
+		//DISABLE THE SUBMIT BUTTON
+		$(this).find('button[type="submit"]').attr('disabled', true);
+
+		var url 	 = $(this).attr('action'),
+			email 	 = $(this).find('input[name="EMAIL"]').val();
+
+		fetchRequest(url, email, '.mc-error-footer');
+
+		return false;
+	});
+
+	/*============== THIS HANDLES THE MAILCHIMP MAILING LIST SIGNUP BOX IN THE HOMEPAGE ==============*/
+	$('#mc-form-home').on('submit', function(){
+		
+		//DISABLE THE SUBMIT BUTTON
+		$(this).find('button[type="submit"]').attr('disabled', true);
+
+		var url 	= $(this).attr('action'),
+			email 	= $(this).find('input[name="EMAIL"]').val();
+
+		fetchRequest(url, email, '.mc-error-home');
+
+		return false;
+	});	
 });
 
+/*
+* @title Send mailchimp request via ajax
+* @param string URL The processing page
+* @param string Email The email that the user inputted in the field
+* @param string Location The location where the error message to be shown
+*/
+function fetchRequest(url, email, location)
+{
+	$.ajax({
+		type: 'POST',
+		url: url,
+		data: {
+			EMAIL 	: email,
+			ajax	: true
+		},
+		dataType: 'json'
+
+	}).success(function(data){
+
+		console.log(data); return false;
+
+		//HANDLE THE RESULT IF SUCCESS OR NOT
+		if (data.result) {
+			$(location).html('<p class="alert alert-success">'+ data.msg +'</p>');
+		}else{
+			$(location).html('<p class="alert alert-danger">'+ data.msg +'</p>');
+		};
+
+		$('form').find('button[type="submit"]').attr('disabled', false);
+		
+	}).error(function(XMLHttpRequest, textStatus){
+		console.log(XMLHttpRequest);
+	});	
+}
+
 $(window).load(function(){
-	
+
+	/*============== THIS HANDLES THE MAILCHIMP MAILING LIST SIGNUP BOX ON POPUP ==============*/
+
 	//POP UP THE MAILCHIMP NEWSLETTER TO FANCYBOX
 	if($('#header').length > 0)
 		$(".popchimp").eq(0).trigger('click');	
@@ -38,9 +137,7 @@ $(window).load(function(){
 
 		if ($("input[name='EMAIL']").val().trim().length == 0){
 
-			$('#Newsletter_SubscribeForm').prepend('<p class="alert alert-warning">Sorry, you cannot leave the input field empty. Please try again.</p>').find('p.alert-warning').delay(2000).slideUp(function(){
-				$(this).remove();
-			});
+			alert('Sorry, you cannot leave the email field empty');
 
 			$(this).attr('disabled', false);
 			return false;
@@ -57,10 +154,16 @@ $(window).load(function(){
 
 		}).success(function(data){
 
-			showFeedbackMessage( data.result, data.msg );
+			alert(data.msg);
 			$('#btn_Subscribe').attr('disabled', false);
+			
+			$.fancybox.close();
+
+			return false;
 
 		}).error(function(XMLHttpRequest, textStatus){
+			alert(XMLHttpRequest); return false;
+
 			console.log(XMLHttpRequest);
 			$('#btn_Subscribe').attr('disabled', false);
 		});
@@ -134,5 +237,5 @@ function createFeedbackWrapper( alertType )
 {
 	var html = $('<div></div>');
 	$(html).addClass('alert hidden');
-	$('.mc-form').prepend(html);
-}
+	$('.mc-form > form').prepend(html);
+} 

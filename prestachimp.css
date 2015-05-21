@@ -1,17 +1,17 @@
-#newsletter-wrap-footer {
-	min-height: 460px;
-	background: url('mailchimp-bg3.jpg') no-repeat top right;
+.mc-label h3 {
+	line-height: 32px;
 }
-.mailchimp-bg {
+#newsletter-wrap-footer .mc-label {
+	background: #f7941d;
+	padding: 10px 0;
+	display: block;	
+}
+.mc-label img {
+	display: block;
+	width: 427px;
+	margin: 0 auto;
+}
+#mc-form-home,
+#newsletter-wrap .mc-label {
 	padding-top: 30px;
-}
-.mc-pop-title {
-	padding: 10px;
-	margin-bottom: 15px;
-	background: #fff;
-	opacity: 0.8;
-	float: left;
-	border-radius: 5px;
-	moz-border-radius: 5px;
-	webkit-border-radius: 5px;
 }
